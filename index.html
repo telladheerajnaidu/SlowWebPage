@@ -26,7 +26,6 @@
     <div id="loading">Page is loading... Please wait (150 seconds).</div>
     <div id="content">
         <h1>Welcome to the Slow Loading Page!</h1>
-        <p>This page is loading slowly, and it has made multiple requests in the background.</p>
         <img id="delayedImage" src="" alt="Delayed Image" />
     </div>
 
@@ -80,16 +79,15 @@
             }, delayTime);
         }
 
-        // Delay the loading of content by 20 seconds, 30 seconds for loading text
+        // Delay the loading of content by 20 seconds
         delayElement('content', 20000);  // Delay content by 20 seconds
-        delayElement('loading', 30000);  // Delay loading text by 30 seconds
 
         // Simulate a delay in image loading (30 seconds after page load)
         setTimeout(() => {
             document.getElementById('delayedImage').src = 'https://via.placeholder.com/150';
         }, 30000);  // Delay image load by 30 seconds
 
-        // Delay the loading of the "This page is loading slowly..." text by 120 seconds
+        // Lazy load the "This page is loading slowly..." text after 120 seconds
         setTimeout(() => {
             const loadingText = document.createElement("p");
             loadingText.textContent = "This page is loading slowly, and it has made multiple requests in the background.";
