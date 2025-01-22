@@ -27,33 +27,36 @@
     </div>
 
     <script>
-        // Function to simulate making HTTP requests (for example, using fetch)
+        // Function to simulate making HTTP requests
         function makeRequest(url) {
             return fetch(url)
-                .then(response => response.text())
+                .then(response => {
+                    console.log('Request to', url, 'completed');
+                    return response.text();
+                })
                 .catch(err => console.log("Request failed", err));
         }
 
-        // Simulating multiple requests with artificial delay
+        // Simulate multiple requests
         const requestUrls = [
             "https://jsonplaceholder.typicode.com/posts",  // Example API endpoint
             "https://jsonplaceholder.typicode.com/users"
         ];
 
-        // Make 5 requests spaced out over time
         let requests = requestUrls.map(url => makeRequest(url));
 
-        // Add a delay of 150 seconds (150,000 milliseconds)
+        // Add a delay of 150 seconds before showing the main content
         setTimeout(() => {
-            // Wait for all requests to finish
+            // Wait for all requests to finish before marking the page as loaded
             Promise.all(requests)
                 .then(() => {
+                    console.log("All requests completed");
                     document.getElementById('loading').style.display = 'none';
                     document.getElementById('content').style.display = 'block';
                 });
         }, 150000); // 150 seconds = 150,000 ms
 
-        // Optionally, simulate additional requests during the loading process (spread out)
+        // Optionally, simulate additional requests every 30 seconds
         setInterval(() => {
             makeRequest("https://jsonplaceholder.typicode.com/comments");
         }, 30000); // Every 30 seconds, make a new request
