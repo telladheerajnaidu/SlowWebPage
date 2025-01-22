@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slow Loading Page with Requests</title>
+    <title>Slow Loading Page with Delayed Elements and Requests</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,6 +17,9 @@
             font-size: 24px;
             color: gray;
         }
+        img {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -24,6 +27,7 @@
     <div id="content">
         <h1>Welcome to the Slow Loading Page!</h1>
         <p>This page is loading slowly, and it has made multiple requests in the background.</p>
+        <img id="delayedImage" src="" alt="Delayed Image" />
     </div>
 
     <script>
@@ -40,7 +44,7 @@
 
         // API endpoints to send requests to
         const requestUrls = [
-            "https://jsonplaceholder.typicode.com/posts",  // Example API endpoint
+            "https://jsonplaceholder.typicode.com/posts",
             "https://jsonplaceholder.typicode.com/users"
         ];
 
@@ -61,11 +65,45 @@
             Promise.all(requests)      // Wait for all requests to finish
                 .then(() => {
                     console.log("All requests completed");
+                    // Make sure the page content is shown after all tasks
                     document.getElementById('loading').style.display = 'none';
                     document.getElementById('content').style.display = 'block';
+                    document.getElementById('delayedImage').style.display = 'block'; // Show image after loading
                 })
                 .catch(err => console.log("Error completing requests:", err));
         }, 150000); // 150 seconds = 150,000 ms
+
+        // Function to simulate a delay in loading page elements
+        function delayElement(elementId, delayTime) {
+            setTimeout(() => {
+                document.getElementById(elementId).style.display = 'block';
+            }, delayTime);
+        }
+
+        // Delay the loading of content by 20 seconds, 30 seconds for loading text
+        delayElement('content', 20000);  // Delay content by 20 seconds
+        delayElement('loading', 30000);  // Delay loading text by 30 seconds
+
+        // Simulate a delay in image loading (30 seconds after page load)
+        setTimeout(() => {
+            document.getElementById('delayedImage').src = 'https://via.placeholder.com/150';
+        }, 30000);  // Delay image load by 30 seconds
+
+        // Lazy load content element when it's in the viewport
+        function lazyLoad(elementId) {
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        document.getElementById(elementId).style.display = 'block';
+                        observer.unobserve(entry.target); // Stop observing after element is loaded
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            observer.observe(document.getElementById(elementId));
+        }
+
+        lazyLoad('content');  // Lazy load the content element when it's in the viewport
     </script>
 </body>
 </html>
