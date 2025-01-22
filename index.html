@@ -30,36 +30,42 @@
         // Function to simulate making HTTP requests
         function makeRequest(url) {
             return fetch(url)
-                .then(response => {
+                .then(response => response.text())
+                .then(text => {
                     console.log('Request to', url, 'completed');
-                    return response.text();
+                    return text;
                 })
                 .catch(err => console.log("Request failed", err));
         }
 
-        // Simulate multiple requests
+        // API endpoints to send requests to
         const requestUrls = [
             "https://jsonplaceholder.typicode.com/posts",  // Example API endpoint
             "https://jsonplaceholder.typicode.com/users"
         ];
 
-        let requests = requestUrls.map(url => makeRequest(url));
+        // Array to keep track of the requests
+        let requests = [];
 
-        // Add a delay of 150 seconds before showing the main content
+        // Send a new request every 1.5 seconds
+        let interval = setInterval(() => {
+            // Send the request and add it to the requests array
+            requestUrls.forEach(url => {
+                requests.push(makeRequest(url));
+            });
+        }, 1500); // 1500 ms = 1.5 seconds
+
+        // Stop the requests after 150 seconds and handle the response
         setTimeout(() => {
-            // Wait for all requests to finish before marking the page as loaded
-            Promise.all(requests)
+            clearInterval(interval);  // Stop sending new requests
+            Promise.all(requests)      // Wait for all requests to finish
                 .then(() => {
                     console.log("All requests completed");
                     document.getElementById('loading').style.display = 'none';
                     document.getElementById('content').style.display = 'block';
-                });
+                })
+                .catch(err => console.log("Error completing requests:", err));
         }, 150000); // 150 seconds = 150,000 ms
-
-        // Optionally, simulate additional requests every 30 seconds
-        setInterval(() => {
-            makeRequest("https://jsonplaceholder.typicode.com/comments");
-        }, 30000); // Every 30 seconds, make a new request
     </script>
 </body>
 </html>
