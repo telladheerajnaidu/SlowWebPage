@@ -89,6 +89,13 @@
             document.getElementById('delayedImage').src = 'https://via.placeholder.com/150';
         }, 30000);  // Delay image load by 30 seconds
 
+        // Delay the loading of the "This page is loading slowly..." text by 120 seconds
+        setTimeout(() => {
+            const loadingText = document.createElement("p");
+            loadingText.textContent = "This page is loading slowly, and it has made multiple requests in the background.";
+            document.getElementById('content').appendChild(loadingText);
+        }, 120000);  // 120 seconds = 120,000 ms
+
         // Lazy load content element when it's in the viewport
         function lazyLoad(elementId) {
             const observer = new IntersectionObserver((entries, observer) => {
