@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>300 Seconds Load Page</title>
+    <title>Slow Loading Page with Requests</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -13,21 +13,50 @@
         #content {
             display: none;
         }
+        #loading {
+            font-size: 24px;
+            color: gray;
+        }
     </style>
 </head>
 <body>
-    <div>Page is loading, please wait...</div>
+    <div id="loading">Page is loading... Please wait (150 seconds).</div>
     <div id="content">
-        <h1>Page Loaded!</h1>
-        <p>This page loaded after 300 seconds of delay.</p>
+        <h1>Welcome to the Slow Loading Page!</h1>
+        <p>This page is loading slowly, and it has made multiple requests in the background.</p>
     </div>
 
     <script>
-        // Simulate a 300-second (5-minute) delay
+        // Function to simulate making HTTP requests (for example, using fetch)
+        function makeRequest(url) {
+            return fetch(url)
+                .then(response => response.text())
+                .catch(err => console.log("Request failed", err));
+        }
+
+        // Simulating multiple requests with artificial delay
+        const requestUrls = [
+            "https://jsonplaceholder.typicode.com/posts",  // Example API endpoint
+            "https://jsonplaceholder.typicode.com/users"
+        ];
+
+        // Make 5 requests spaced out over time
+        let requests = requestUrls.map(url => makeRequest(url));
+
+        // Add a delay of 150 seconds (150,000 milliseconds)
         setTimeout(() => {
-            document.querySelector('div').style.display = 'none';
-            document.getElementById('content').style.display = 'block';
-        }, 300000); // 300000 ms = 300 seconds
+            // Wait for all requests to finish
+            Promise.all(requests)
+                .then(() => {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('content').style.display = 'block';
+                });
+        }, 150000); // 150 seconds = 150,000 ms
+
+        // Optionally, simulate additional requests during the loading process (spread out)
+        setInterval(() => {
+            makeRequest("https://jsonplaceholder.typicode.com/comments");
+        }, 30000); // Every 30 seconds, make a new request
     </script>
 </body>
 </html>
