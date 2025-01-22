@@ -65,7 +65,7 @@
             Promise.all(requests)      // Wait for all requests to finish
                 .then(() => {
                     console.log("All requests completed");
-                    // Make sure the page content is shown after all tasks
+                    // Ensure the full content is shown after all tasks
                     document.getElementById('loading').style.display = 'none';
                     document.getElementById('content').style.display = 'block';
                     document.getElementById('delayedImage').style.display = 'block'; // Show image after loading
